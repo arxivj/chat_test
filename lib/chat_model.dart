@@ -10,16 +10,15 @@ class Chat {
   final String? industry;
   final String? summary;
 
-  // final List<IndustryInfo>? recommendations;
-
-  Chat(
-      {this.message,
-      required this.type,
-      required this.time,
-      this.relatedIndustry,
-      this.comment,
-      this.industry,
-      this.summary});
+  Chat({
+    this.message,
+    required this.type,
+    required this.time,
+    this.relatedIndustry,
+    this.comment,
+    this.industry,
+    this.summary,
+  });
 
   factory Chat.sent(String message) {
     return Chat(message: message, type: MessageType.user, time: DateTime.now());
@@ -30,8 +29,7 @@ class Chat {
   }
 
   factory Chat.industry(String industry) {
-    return Chat(
-        industry: industry, type: MessageType.bot, time: DateTime.now());
+    return Chat(industry: industry, type: MessageType.bot, time: DateTime.now());
   }
 
   factory Chat.summary(String summary) {
