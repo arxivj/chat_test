@@ -14,7 +14,7 @@ class ChatPage extends StatelessWidget {
     Future<void> scrollToBottom() async {
       await Future.delayed(const Duration(milliseconds: 100));
       scrollController.animateTo(
-        0,
+        scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -23,6 +23,7 @@ class ChatPage extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => ChatViewModel(baseUrl: 'http://ai.mofin.co.kr/mogene'),
       child: Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: const Text('Chat Test'),
@@ -40,40 +41,58 @@ class ChatPage extends StatelessWidget {
           onTap: () {
             FocusScope.of(context).unfocus();
           },
-          child: Column(
+          child: Stack(
             children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Consumer<ChatViewModel>(
-                    builder: (context, chatViewModel, child) {
-                      final messages = chatViewModel.messages.reversed.toList();
-                      return ListView.builder(
-                        controller: scrollController,
-                        shrinkWrap: true,
-                        reverse: true,
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          return Bubble(chat: messages[index], scrollController: scrollController);
+              Column(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Consumer<ChatViewModel>(
+                        builder: (context, chatViewModel, child) {
+                          final messages = chatViewModel.messages.reversed.toList();
+                          return ListView.builder(
+                            controller: scrollController,
+                            shrinkWrap: true,
+                            reverse: true,
+                            itemCount: messages.length,
+                            itemBuilder: (context, index) {
+                              return Bubble(chat: messages[index], scrollController: scrollController);
+                            },
+                          );
                         },
+                      ),
+                    ),
+                  ),
+                  Consumer<ChatViewModel>(
+                    builder: (context, chatViewModel, child) {
+                      return Column(
+                        children: [
+                          if (chatViewModel.isLoading)
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          _buildInputField(context, chatViewModel),
+                        ],
                       );
                     },
                   ),
-                ),
+                ],
               ),
-              Consumer<ChatViewModel>(
-                builder: (context, chatViewModel, child) {
-                  return Column(
-                    children: [
-                      if (chatViewModel.isLoading)
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      _buildInputField(context, chatViewModel),
-                    ],
-                  );
-                },
+              Positioned(
+                bottom: 70.0,
+                right: 10.0,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    scrollToBottom();
+                  },
+                  backgroundColor: Colors.teal.shade500,
+                  child: const Icon(Icons.arrow_upward),
+                  shape: CircleBorder(),
+                  mini: true,
+                  tooltip: 'Scroll to top',
+                ),
               ),
             ],
           ),
