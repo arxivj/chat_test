@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_1.dart';
+import 'chat_contents_widget.dart';
 import 'chat_model.dart';
 import 'formatter.dart';
 import 'message_type.dart';
@@ -21,38 +22,22 @@ class Bubble extends StatelessWidget {
       mainAxisAlignment: alignmentOnType,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (chat.type == MessageType.bot)
-          const CircleAvatar(
-            backgroundImage: AssetImage("assets/images/avatar_1.png"),
-          ),
+        // if (chat.type == MessageType.bot && chat.message != null)
+        //   const CircleAvatar(
+        //     backgroundImage: AssetImage("assets/images/avatar_1.png"),
+        //   ),
         Container(
           margin: margin ?? EdgeInsets.zero,
-          child: PhysicalShape(
-            clipper: clipperOnType,
-            elevation: 2,
-            color: bgColorOnType,
-            shadowColor: Colors.grey.shade200,
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.8,
-              ),
-              padding: paddingOnType,
-              child: Column(
-                crossAxisAlignment: crossAlignmentOnType,
-                children: [
-                  Text(
-                    chat.message,
-                    style: TextStyle(color: textColorOnType),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    Formatter.formatDateTime(chat.time),
-                    style: TextStyle(color: textColorOnType, fontSize: 12),
-                  )
-                ],
-              ),
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.8,
+            ),
+            // padding: paddingOnType,
+            child: Column(
+              crossAxisAlignment: crossAlignmentOnType,
+              children: [
+                ChatContentsWidget(chat: chat),
+              ],
             ),
           ),
         ),
@@ -63,29 +48,29 @@ class Bubble extends StatelessWidget {
   Color get textColorOnType {
     switch (chat.type) {
       case MessageType.user:
-        return Colors.white;
+        return Colors.red;
       case MessageType.bot:
-        return const Color(0xFF0F0F0F);
+        return Colors.blue;
     }
   }
 
   Color get bgColorOnType {
     switch (chat.type) {
       case MessageType.bot:
-        return const Color(0xFFE7E7ED);
+        return Colors.black;
       case MessageType.user:
         return const Color(0xFF007AFF);
     }
   }
 
-  CustomClipper<Path> get clipperOnType {
-    switch (chat.type) {
-      case MessageType.user:
-        return ChatBubbleClipper1(type: BubbleType.sendBubble);
-      case MessageType.bot:
-        return ChatBubbleClipper1(type: BubbleType.receiverBubble);
-    }
-  }
+  // CustomClipper<Path> get clipperOnType {
+  //   switch (chat.type) {
+  //     case MessageType.user:
+  //       return ChatBubbleClipper1(type: BubbleType.sendBubble);
+  //     case MessageType.bot:
+  //       return ChatBubbleClipper1(type: BubbleType.receiverBubble);
+  //   }
+  // }
 
   CrossAxisAlignment get crossAlignmentOnType {
     switch (chat.type) {
